@@ -1,14 +1,14 @@
+import CalendarComponent from './calendar'
+import moment from 'moment'
+
 export default async function Main() {
     const tasks = await getTasks()
-    return (
-        <div>
-            {
-                tasks.map((task => {
-                    return <div>{task.start}, {task.end}, {task.pending_users}, {task.users}</div>
-                }))
-            }
-        </div>
-    );
+    const formattedTasks = tasks.map(task => {return {
+        title: task.name,
+        start: moment(task.start),
+        end: moment(task.end)
+    }})
+    return <CalendarComponent tasksList={JSON.stringify(formattedTasks)}></CalendarComponent>
 }
 
 export const getTasks = (async() => {

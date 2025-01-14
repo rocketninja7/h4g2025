@@ -2,7 +2,8 @@ import json
 from datetime import datetime
 
 class Task:
-    def __init__(self, start, end, pending_users, users):
+    def __init__(self, name, start, end, pending_users, users):
+        self.name = name
         self.start = start
         self.end = end
         self.pending_users = pending_users
@@ -10,8 +11,9 @@ class Task:
 
     def jsonify(self):
         jsondict = {
-            "start": self.start.strftime("%Y:%m:%d:%H:%M"),
-            "end": self.end.strftime("%Y:%m:%d:%H:%M"),
+            "name": self.name,
+            "start": self.start.strftime("%Y-%m-%d %H:%M"),
+            "end": self.end.strftime("%Y-%m-%d %H:%M"),
             "pending_users": self.pending_users,
             "users": self.users
         }
