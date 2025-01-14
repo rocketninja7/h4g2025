@@ -1,18 +1,29 @@
-import CalendarComponent from './calendar'
+"use client"
+import ModernCalendar from './calendar'
 import moment from 'moment'
+import { useEffect, useState } from 'react'
 
-export default async function Main() {
-    const tasks = await getTasks()
-    const formattedTasks = tasks.map(task => {return {
-        title: task.name,
-        start: moment(task.start),
-        end: moment(task.end)
-    }})
-    return <CalendarComponent tasksList={JSON.stringify(formattedTasks)}></CalendarComponent>
+export default function Main() {
+    const [tasks, setTasks] = useState([])
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            const fetchedTasks = await getTasks()
+            const formattedTasks = fetchedTasks.map(task => ({
+                title: task.name,
+                start: new Date(task.start),
+                end: new Date(task.end)
+            }))
+            setTasks(formattedTasks)
+        }
+        fetchTasks()
+    }, [])
+
+    return <ModernCalendar tasksList={tasks} />
 }
 
-export const getTasks = (async() => {
+async function getTasks() {
     const res = await fetch("http://127.0.0.1:5000/getTasks/1")
     const tasks = await res.json()
     return tasks
-})
+}

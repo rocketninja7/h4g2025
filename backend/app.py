@@ -13,7 +13,8 @@ def main():
 def getTaskForUser(user_id):
     temp = [
         Task("Test1", datetime(2025,2,25,13), datetime(2025,2,25,14), [1,2], [3]), 
-        Task("Test2", datetime(2025,4,1,8), datetime(2025,4,1,9), [2,3], [1])]
+        Task("Test2", datetime(2025,4,1,8), datetime(2025,4,1,9), [2,3], [1]),
+        Task("Test3", datetime(2025,1,14,8), datetime(2025,1,14,9), [2,3], [1])]
     return [task.jsonify() for task in temp]
 
 
