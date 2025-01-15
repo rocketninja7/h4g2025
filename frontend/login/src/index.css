@@ -11,3 +11,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.register-button {
+  background-color: #007BFF;
+  margin-top: 20px;
+}
+
+.register-button:hover {
+  background-color: #0056b3;
+}
+
+.login-button {
+  background-color: #007BFF;
+  margin-top: 20px;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
