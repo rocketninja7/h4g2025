@@ -76,7 +76,7 @@ function Register() {
             />
             <label htmlFor="show-password">Show Password</label>
           </div>
-          <button type="submit" className="login-button register-button">
+          <button type="submit" className="register-button">
             Register
           </button>
         </form>
