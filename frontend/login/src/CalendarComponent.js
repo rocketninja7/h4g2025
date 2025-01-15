@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import { useLocation } from 'react-router-dom';
 import moment from 'moment';
 
-const ModernCalendar = ({ tasksList }) => {
+const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const localizer = momentLocalizer(moment);
     const location = useLocation();
