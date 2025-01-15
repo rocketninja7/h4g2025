@@ -17,7 +17,7 @@ const ModernCalendar = ({ tasksList }) => {
     return (
         <div className="flex justify-center items-center min-h-screen p-6">
             <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden">
-                <style jsx global>{`
+                <style>{`
                     .rbc-calendar {
                         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
                     }
