@@ -76,11 +76,11 @@ function Register() {
             />
             <label htmlFor="show-password">Show Password</label>
           </div>
-          <button type="submit" className="register-button">
+          <button type="submit" className="login-button register-button">
             Register
           </button>
         </form>
-        <button onClick={navigateToLogin} className="back-button">
+        <button onClick={navigateToLogin} className="login-button back-button">
           Back to Login
         </button>
       </header>

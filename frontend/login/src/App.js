@@ -58,9 +58,9 @@ function App() {
             <label htmlFor="show-password">Show Password</label>
           </div>
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" className="login-button">Login</button>
       </form>
-      <button onClick={navigateToRegister} className="register-button">
+      <button onClick={navigateToRegister} className="login-button register-button">
         Register New User
       </button>
     </div>
