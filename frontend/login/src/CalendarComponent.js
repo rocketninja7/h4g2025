@@ -96,6 +96,9 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
                             style={{ height: '100%' }}
                             views={allViews}
                             defaultView="month"
+                            onSelectEvent={handleSelectEvent}
+                            onSelectSlot={handleSelectSlot}
+                            selectable
                         />
                     </div>
                 </div>

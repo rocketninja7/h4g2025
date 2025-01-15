@@ -39,13 +39,21 @@ export default function Calendar() {
     }, [])
 
     return (
-        <div style={{ display: "flex" }}>
+        <div>
             <ModernCalendar 
                 tasksList={tasks} 
                 handleSelectSlot={handleSelectSlot} 
                 handleSelectEvent={handleSelectEvent} 
                 />
-            { start && end && (<CreateTask start={moment(start).format("YYYY-MM-DD HH:mm")} end={moment(end).format("YYYY-MM-DD HH:mm")} />) }
+            { start && end && (
+                <div style={{position: "absolute", top: "50%", left: "50%", zIndex: 10}} >
+                    <div style={{position: "relative", left: "-50%", backgroundColor: "#D3D3D3", padding: "10px"}} >
+                        <CreateTask 
+                            start={moment(start).format("YYYY-MM-DD HH:mm")} 
+                            end={moment(end).format("YYYY-MM-DD HH:mm")}/>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

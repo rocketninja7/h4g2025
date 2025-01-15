@@ -67,7 +67,7 @@ export default function CreateTask({start, end}) {
                 isMulti
               />
             </div>
-            <button type="submit" className="login-button">Create Task</button>
+            <button type="submit" className="button login-button">Create Task</button>
           </form>
         </div>
       );
