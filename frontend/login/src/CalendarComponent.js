@@ -3,7 +3,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 
-const ModernCalendar = ({ tasksList }) => {
+const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
     const localizer = momentLocalizer(moment);
 
     const allViews = {
@@ -132,6 +132,9 @@ const ModernCalendar = ({ tasksList }) => {
                     style={{ height: '700px' }}
                     views={allViews}
                     defaultView="month"
+                    onSelectEvent={handleSelectEvent}
+                    onSelectSlot={handleSelectSlot}
+                    selectable
                 />
             </div>
         </div>
