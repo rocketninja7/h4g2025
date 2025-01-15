@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './App.css';
 
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,14 +17,20 @@ function App() {
         body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
-      alert(data.message);
+
+      if (response.ok) {
+        // Pass username as state when navigating to /calendar
+        navigate('/calendar', { state: { username } });
+      } else {
+        alert(data.message);
+      }
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
   const navigateToRegister = () => {
-    window.location.href = '/register';
+    navigate('/register'); // Use navigate for consistent navigation
   };
 
   return (
@@ -60,7 +68,7 @@ function App() {
         </div>
         <button type="submit" className="login-button">Login</button>
       </form>
-      <button onClick={navigateToRegister} className="login-button register-button">
+      <button onClick={navigateToRegister} className="register-button">
         Register New User
       </button>
     </div>
