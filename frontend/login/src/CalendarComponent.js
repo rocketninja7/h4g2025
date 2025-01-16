@@ -4,13 +4,15 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import './Calendar.css';
+import ChatWindow from './ChatWindow';
+import styles from './ChatWindow.module.css'; 
 
 const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const localizer = momentLocalizer(moment);
     const location = useLocation();
     const { username } = location.state || {};
-
+    const [isChatOpen, setIsChatOpen] = useState(false);
     const navigate = useNavigate();
     const navigateToLogin = () => {
         navigate('/');
@@ -37,9 +39,9 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
         <div className="calendar-container">
             <div className="calendar-header">
                 <div className="header-left">
-                    <button onClick={toggleSidebar} className="menu-button">
-                        ☰
-                    </button>
+                <button onClick={toggleSidebar} className="menu-button">
+                    <span>☰</span>
+                </button>
                 </div>
                 <h1 className="calendar-title">Calendar</h1>
                 <div className="header-right">
@@ -56,7 +58,7 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
                 <ul className="sidebar-list">
                         <li className="sidebar-item" onClick={navigateToHome}>Dashboard</li>
                         <li className="sidebar-item" onClick={navigateToCalendar}>Calendar</li>
-                        <li className="sidebar-item">Tasks</li>
+                        <li className="sidebar-item" onClick={() => setIsChatOpen(true)}>Get Help</li>
                         <li className="sidebar-item" onClick={navigateToLogin}>Logout</li>
                     </ul>
                 </div>
@@ -78,6 +80,10 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
                     </div>
                 </div>
             </div>
+            <ChatWindow 
+                isOpen={isChatOpen} 
+                onClose={() => setIsChatOpen(false)} 
+            />
         </div>
     );
 };

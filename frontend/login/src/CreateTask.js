@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Select from 'react-select';
+import ChatWindow from './ChatWindow';
+import styles from './ChatWindow.module.css'; 
 
 async function getUsers() {
     const res = await fetch("http://127.0.0.1:5000/getUsers")
@@ -14,6 +16,9 @@ export default function CreateTask({start, end, onClose, updateCalendarState}) {
     const [repeatOption, setRepeatOption] = useState('never');
     const [reminder, setReminder] = useState('none');
     const modalRef = useRef();
+    const [startTime, setStartTime] = useState(start);
+    const [endTime, setEndTime] = useState(end);
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     const repeatOptions = [
         { value: 'never', label: 'Never' },
@@ -51,6 +56,21 @@ export default function CreateTask({start, end, onClose, updateCalendarState}) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [onClose]);
+
+    const handleStartTimeChange = (e) => {
+      setStartTime(e.target.value);
+      // If end time is before start time, update end time
+      if (new Date(e.target.value) > new Date(endTime)) {
+          setEndTime(e.target.value);
+      }
+  };
+
+    const handleEndTimeChange = (e) => {
+        // Only allow end time to be after start time
+        if (new Date(e.target.value) >= new Date(startTime)) {
+            setEndTime(e.target.value);
+        }
+    };
 
     const handleTaskCreation = async (e) => {
         e.preventDefault();
@@ -176,8 +196,8 @@ export default function CreateTask({start, end, onClose, updateCalendarState}) {
                             <span style={customStyles.timeLabel}>Start:</span>
                             <input
                                 type="datetime-local"
-                                value={start}
-                                readOnly
+                                value={startTime}
+                                onChange={handleStartTimeChange}
                                 style={customStyles.input}
                             />
                         </div>
@@ -185,8 +205,8 @@ export default function CreateTask({start, end, onClose, updateCalendarState}) {
                             <span style={customStyles.timeLabel}>End:</span>
                             <input
                                 type="datetime-local"
-                                value={end}
-                                readOnly
+                                value={endTime}
+                                onChange={handleEndTimeChange}
                                 style={customStyles.input}
                             />
                         </div>
@@ -225,12 +245,19 @@ export default function CreateTask({start, end, onClose, updateCalendarState}) {
                             placeholder="Select reminder..."
                         />
                     </div>
-
+                    <button className="action-button" 
+                                onClick={() => setIsChatOpen(true)}>
+                        AI Assistant
+                    </button>
                     <button type="submit" style={customStyles.button}>
                         Create Task
                     </button>
                 </form>
             </div>
+            <ChatWindow 
+                isOpen={isChatOpen} 
+                onClose={() => setIsChatOpen(false)} 
+            />
         </div>
     );
 }
