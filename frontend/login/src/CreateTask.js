@@ -7,7 +7,7 @@ async function getUsers() {
     return users
 }
 
-export default function CreateTask({start, end, onClose}) {
+export default function CreateTask({start, end, onClose, updateCalendarState}) {
     const [users, setUsers] = useState([]);
     const [taskname, setTaskname] = useState('');
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -76,6 +76,7 @@ export default function CreateTask({start, end, onClose}) {
         } catch (error) {
             console.error('Error:', error);
         }
+        updateCalendarState();
     };
 
     const customStyles = {

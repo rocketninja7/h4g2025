@@ -9,14 +9,11 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-users = csvfn.get_users()
+users, userlist = csvfn.get_users()
 print(users)
-userlist = [User(1, "pikachu"), User(2, "piplup"), User(3, "mewtwo")]
 
-
-tasks = [
-    Task(1, "Test1", datetime(2025,2,25,13), datetime(2025,2,25,14), [userlist[0],userlist[1]], [userlist[2]]), 
-    Task(2, "Test2", datetime(2025,4,1,8), datetime(2025,4,1,9), [userlist[1],userlist[2]], [userlist[0]])]
+tasks = csvfn.get_tasks(userlist, [])
+print(tasks)
 
 @app.route("/")
 def main():
@@ -24,8 +21,6 @@ def main():
 
 @app.route("/getTasks/<int:user_id>")
 def getTaskForUser(user_id):
-    print([task.jsonify() for task in tasks])
-    print([task.jsonify() for task in tasks if user_id in [curr_user.id for curr_user in task.users]])
     return [task.jsonify() for task in tasks if user_id in [curr_user.id for curr_user in task.users]]
 
 @app.route("/getPendingTasks/<int:user_id>")
@@ -52,6 +47,7 @@ def acceptTask(task_id):
         return jsonify({"message": "User is not invited to task or has already responded"}), 403
     task.users.append(user)
     task.pending_users.remove(user)
+    csvfn.write_tasks(tasks)
     return jsonify({"message": "Task accepted successfully"}), 200
 
 @app.route("/rejectTask/<int:task_id>", methods=['POST'])
@@ -73,6 +69,7 @@ def rejectTask(task_id):
     if user not in task.pending_users:
         return jsonify({"message": "User is not invited to task or has already responded"}), 403
     task.pending_users.remove(user)
+    csvfn.write_tasks(tasks)
     return jsonify({"message": "Task rejected successfully"}), 200
 
 @app.route('/login', methods=['POST'])
@@ -108,9 +105,9 @@ def addTask():
     name = data.get("name")
     start = datetime.strptime(data.get("start"), fmt)
     end = datetime.strptime(data.get("end"), fmt)
-    pending_users = [User(user.get("id"), user.get("name")) for user in data.get("pending_users")]
-
-    tasks.append(Task(name, start, end, pending_users, []))
+    pending_users = [[finduser for finduser in userlist if finduser.id == user.get("id")][0] for user in data.get("pending_users")]
+    tasks.append(Task(len(tasks) + 1, name, "", start, end, pending_users, []))
+    csvfn.write_tasks(tasks)
     return jsonify({"message": "Task added successfully"}), 201
 
 

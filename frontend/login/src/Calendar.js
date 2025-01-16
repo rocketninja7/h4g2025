@@ -66,6 +66,7 @@ export default function Calendar() {
                     start={moment(start).format("YYYY-MM-DD HH:mm")} 
                     end={moment(end).format("YYYY-MM-DD HH:mm")}
                     onClose={handleCloseModal}  // Pass the handler
+                    updateCalendarState={updateCalendarState}
                 />
             )}
         </div>
