@@ -10,13 +10,15 @@ async function getUsers() {
 }
 
 export default function CreateTask({start, end, onClose}) {
-    const [users, setUsers] = useState([]);
-    const [taskname, setTaskname] = useState('');
-    const [selectedUsers, setSelectedUsers] = useState([]);
-    const [repeatOption, setRepeatOption] = useState('never');
-    const [reminder, setReminder] = useState('none');
-    const modalRef = useRef();
-    const [isChatOpen, setIsChatOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [taskname, setTaskname] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [repeatOption, setRepeatOption] = useState('never');
+  const [reminder, setReminder] = useState('none');
+  const [startTime, setStartTime] = useState(start);
+  const [endTime, setEndTime] = useState(end);
+  const modalRef = useRef();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
     const repeatOptions = [
         { value: 'never', label: 'Never' },
@@ -54,6 +56,21 @@ export default function CreateTask({start, end, onClose}) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [onClose]);
+
+    const handleStartTimeChange = (e) => {
+      setStartTime(e.target.value);
+      // If end time is before start time, update end time
+      if (new Date(e.target.value) > new Date(endTime)) {
+          setEndTime(e.target.value);
+      }
+  };
+
+    const handleEndTimeChange = (e) => {
+        // Only allow end time to be after start time
+        if (new Date(e.target.value) >= new Date(startTime)) {
+            setEndTime(e.target.value);
+        }
+    };
 
     const handleTaskCreation = async (e) => {
         e.preventDefault();
@@ -178,8 +195,8 @@ export default function CreateTask({start, end, onClose}) {
                             <span style={customStyles.timeLabel}>Start:</span>
                             <input
                                 type="datetime-local"
-                                value={start}
-                                readOnly
+                                value={startTime}
+                                onChange={handleStartTimeChange}
                                 style={customStyles.input}
                             />
                         </div>
@@ -187,8 +204,8 @@ export default function CreateTask({start, end, onClose}) {
                             <span style={customStyles.timeLabel}>End:</span>
                             <input
                                 type="datetime-local"
-                                value={end}
-                                readOnly
+                                value={endTime}
+                                onChange={handleEndTimeChange}
                                 style={customStyles.input}
                             />
                         </div>

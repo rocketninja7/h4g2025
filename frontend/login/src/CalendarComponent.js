@@ -39,9 +39,9 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
         <div className="calendar-container">
             <div className="calendar-header">
                 <div className="header-left">
-                    <button onClick={toggleSidebar} className="menu-button">
-                        ☰
-                    </button>
+                <button onClick={toggleSidebar} className="menu-button">
+                    <span>☰</span>
+                </button>
                 </div>
                 <h1 className="calendar-title">Calendar</h1>
                 <div className="header-right">
