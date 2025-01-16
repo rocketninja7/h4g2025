@@ -10,7 +10,7 @@ import CreateTask from './CreateTask';
 const HomePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const location = useLocation();
-    const { username } = location.state || {};
+    const { username, id } = location.state || {};
     const [recentTasks, setRecentTasks] = useState([]);
     const [upcomingTasks, setUpcomingTasks] = useState([]);
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -20,10 +20,10 @@ const HomePage = () => {
         navigate('/');
     };
     const navigateToHome = () => {
-        navigate('/homepage', { state: { username } });
+        navigate('/homepage', { state: { username, id } });
     };
     const navigateToCalendar = () => {
-        navigate('/calendar', { state: { username } });
+        navigate('/calendar', { state: { username, id } });
     };
 
     useEffect(() => {

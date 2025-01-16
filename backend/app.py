@@ -80,7 +80,7 @@ def login():
     password = data.get('password')
 
     if users.get(username) == password:
-        return jsonify({"message": "Login successful"}), 200
+        return jsonify({"message": "Login successful", "id": [user for user in userlist if user.name == username][0].id}), 200
     else:
         return jsonify({"message": "Invalid username or password"}), 401
 

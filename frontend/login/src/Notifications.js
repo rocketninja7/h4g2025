@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import ReceiveTask from './ReceiveTask';
 
-async function getTasks() {
-    const res = await fetch("http://127.0.0.1:5000/getPendingTasks/1")
-    const tasks = await res.json()
-    return tasks
-}
+export default function Notifications({updateCalendarState, userId}) {
+    async function getTasks() {
+        const res = await fetch("http://127.0.0.1:5000/getPendingTasks/" + userId)
+        const tasks = await res.json()
+        return tasks
+    }
 
-export default function Notifications({updateCalendarState}) {
     const [tasks, setTasks] = useState([])
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export default function Notifications({updateCalendarState}) {
                 const response = await fetch('http://127.0.0.1:5000/acceptTask/' + id, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: 1 }),
+                body: JSON.stringify({ id: userId }),
                 });
             //   const data = await response.json();
             //   alert(data.message);
