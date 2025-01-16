@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 .login-container {
   display: flex;
   justify-content: center;
@@ -45,17 +46,30 @@ input[type="password"] {
 
 input[type="checkbox"] {
   margin-right: 8px;
+  transform: scale(1.2); /* Slightly enlarge checkbox for better visibility */
+  cursor: pointer; /* Add pointer cursor for a better user experience */
 }
 
 .checkbox-group {
   display: flex;
   align-items: center;
   margin-top: 8px;
-  justify-content: center; /* Center the checkbox and label horizontally */
+  justify-content: flex-start; /* Align with input fields */
+  gap: 5px; /* Add spacing between checkbox and label */
+}
+
+input[type="checkbox"] {
+  margin: 0; /* Remove extra margins */
+  transform: scale(1.2); /* Slightly enlarge the checkbox for better visibility */
+  cursor: pointer;
 }
 
 .checkbox-group label {
-  font-size: 0.9rem; /* Reduce the font size for the "Show Password" text */
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+  margin: 0; /* Remove extra margins */
+  line-height: 1; /* Ensure proper vertical alignment with checkbox */
 }
 
 .button {
@@ -68,6 +82,7 @@ input[type="checkbox"] {
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .login-button {
