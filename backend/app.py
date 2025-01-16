@@ -3,12 +3,16 @@ from flask_cors import CORS
 from datetime import datetime
 from task import *
 from user import *
+import csvfn
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-users = {"pikachu": "pikachu"}
+users = csvfn.get_users()
+print(users)
 userlist = [User(1, "pikachu"), User(2, "piplup"), User(3, "mewtwo")]
+
 
 tasks = [
     Task(1, "Test1", datetime(2025,2,25,13), datetime(2025,2,25,14), [userlist[0],userlist[1]], [userlist[2]]), 

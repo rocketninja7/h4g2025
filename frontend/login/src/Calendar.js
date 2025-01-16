@@ -4,11 +4,13 @@ import CreateTask from './CreateTask'
 import moment from 'moment';
 import Notifications from './Notifications';
 
+
 export default function Calendar() {
     const [tasks, setTasks] = useState([])
     const [start, setStart] = useState(null)
     const [end, setEnd] = useState(null)
     const [calendarState, setCalendarState] = useState(0)
+    const [showModal, setShowModal] = useState(false)  // Add this line
 
     const fetchTasks = async () => {
         const fetchedTasks = await getTasks()
@@ -24,10 +26,7 @@ export default function Calendar() {
         ({ start, end }) => {
             setStart(start)
             setEnd(end)
-        // const title = window.prompt('New Event name')
-        // if (title) {
-        //     setEvents((prev) => [...prev, { start, end, title }])
-        // }
+            setShowModal(true)  // Add this line
         },
         []
     )
@@ -41,6 +40,12 @@ export default function Calendar() {
         fetchTasks()
         setCalendarState(calendarState + 1)
     }
+    
+    const handleCloseModal = useCallback(() => {  // Add this function
+        setShowModal(false)
+        setStart(null)
+        setEnd(null)
+    }, [])
 
     useEffect(() => {
         fetchTasks()
@@ -54,16 +59,14 @@ export default function Calendar() {
                 tasksList={tasks} 
                 handleSelectSlot={handleSelectSlot} 
                 handleSelectEvent={handleSelectEvent} 
-                />
+            />
             <Notifications updateCalendarState={updateCalendarState} />
-            { start && end && (
-                <div style={{position: "absolute", top: "50%", left: "50%", zIndex: 10}} >
-                    <div style={{position: "relative", left: "-50%", backgroundColor: "#D3D3D3", padding: "10px"}} >
-                        <CreateTask 
-                            start={moment(start).format("YYYY-MM-DD HH:mm")} 
-                            end={moment(end).format("YYYY-MM-DD HH:mm")}/>
-                    </div>
-                </div>
+            {showModal && start && end && (  // Update this condition
+                <CreateTask 
+                    start={moment(start).format("YYYY-MM-DD HH:mm")} 
+                    end={moment(end).format("YYYY-MM-DD HH:mm")}
+                    onClose={handleCloseModal}  // Pass the handler
+                />
             )}
         </div>
     )
