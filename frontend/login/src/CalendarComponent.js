@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import './Calendar.css';
 
@@ -10,6 +10,17 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
     const localizer = momentLocalizer(moment);
     const location = useLocation();
     const { username } = location.state || {};
+
+    const navigate = useNavigate();
+    const navigateToLogin = () => {
+        navigate('/');
+    };
+    const navigateToHome = () => {
+        navigate('/homepage', { state: { username } });
+    };
+    const navigateToCalendar = () => {
+        navigate('/calendar', { state: { username } });
+    };
 
     const allViews = {
         month: true,
@@ -42,10 +53,11 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
 
             <div className="main-content">
                 <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-                    <ul className="sidebar-list">
-                        <li className="sidebar-item">Option 1</li>
-                        <li className="sidebar-item">Option 2</li>
-                        <li className="sidebar-item">Option 3</li>
+                <ul className="sidebar-list">
+                        <li className="sidebar-item" onClick={navigateToHome}>Dashboard</li>
+                        <li className="sidebar-item" onClick={navigateToCalendar}>Calendar</li>
+                        <li className="sidebar-item">Tasks</li>
+                        <li className="sidebar-item" onClick={navigateToLogin}>Logout</li>
                     </ul>
                 </div>
 

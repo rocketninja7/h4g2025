@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './HomePage.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const HomePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -8,6 +10,17 @@ const HomePage = () => {
     const { username } = location.state || {};
     const [recentTasks, setRecentTasks] = useState([]);
     const [upcomingTasks, setUpcomingTasks] = useState([]);
+
+    const navigate = useNavigate();
+    const navigateToLogin = () => {
+        navigate('/');
+    };
+    const navigateToHome = () => {
+        navigate('/homepage', { state: { username } });
+    };
+    const navigateToCalendar = () => {
+        navigate('/calendar', { state: { username } });
+    };
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -52,20 +65,22 @@ const HomePage = () => {
                     ☰
                 </button>
                 <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Dashboard</h1>
-                {username && (
-                    <div style={{ fontSize: '1rem' }}>
-                        Welcome, <span style={{ fontWeight: 'bold' }}>{username}</span>
-                    </div>
-                )}
+                <div className="header-right">
+                    {username && (
+                        <span style={{ fontSize: '1rem' }}>
+                            Welcome, <strong>{username}</strong>
+                        </span>
+                    )}
+                </div>
             </div>
 
             <div className="main-content">
                 <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
                     <ul className="sidebar-list">
-                        <li className="sidebar-item">Dashboard</li>
-                        <li className="sidebar-item">Calendar</li>
+                        <li className="sidebar-item" onClick={navigateToHome}>Dashboard</li>
+                        <li className="sidebar-item" onClick={navigateToCalendar}>Calendar</li>
                         <li className="sidebar-item">Tasks</li>
-                        <li className="sidebar-item">Settings</li>
+                        <li className="sidebar-item" onClick={navigateToLogin}>Logout</li>
                     </ul>
                 </div>
 
@@ -77,7 +92,7 @@ const HomePage = () => {
                         </p>
                         <div className="quick-actions">
                             <button className="action-button">Create New Task</button>
-                            <button className="action-button">View Calendar</button>
+                            <button className="action-button" onClick={navigateToCalendar}>View Calendar</button>
                             <button className="action-button">Team Overview</button>
                         </div>
                     </div>
