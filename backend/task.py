@@ -8,8 +8,9 @@ class Task:
         self.id = id
         self.name = name
         self.desc = desc
-        self.start = start
-        self.end = end
+        # Ensure start and end are datetime objects
+        self.start = start if isinstance(start, datetime) else datetime.strptime(start, fmt)
+        self.end = end if isinstance(end, datetime) else datetime.strptime(end, fmt)
         self.pending_users = pending_users
         self.users = users
 
