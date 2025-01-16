@@ -29,8 +29,8 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    backgroundColor: '#4f46e5',
-                    color: '#fff',
+                    background: 'none',
+                    color: 'black',
                     padding: '1rem',
                     width: '90vw',
                     boxSizing: 'border-box',
@@ -41,7 +41,7 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
                     style={{
                         background: 'none',
                         border: 'none',
-                        color: '#fff',
+                        color: 'black',
                         fontSize: '1.5rem',
                         cursor: 'pointer',
                     }}
