@@ -25,8 +25,8 @@ export default function Calendar() {
         const fetchedTasks = await getTasks()
         const formattedTasks = fetchedTasks.map(task => ({
             title: task.name,
-            start: new Date(task.start),
-            end: new Date(task.end)
+            start: moment(task.start, "YYYY-MM-DD HH:mm").toDate(),
+            end: moment(task.end, "YYYY-MM-DD HH:mm").toDate()
         }))
         setTasks(formattedTasks)
     }

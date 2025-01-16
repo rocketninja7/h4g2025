@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Select from 'react-select';
 import ChatWindow from './ChatWindow';
 import styles from './ChatWindow.module.css'; 
+import moment from 'moment';
 
 async function getUsers() {
     const res = await fetch("http://127.0.0.1:5000/getUsers")
@@ -75,21 +76,21 @@ export default function CreateTask({start, end, onClose, updateCalendarState}) {
     const handleTaskCreation = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://127.0.0.1:5000/addTask', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: taskname,
-                    start,
-                    end,
-                    pending_users: selectedUsers.map(user => ({
-                        id: user.value,
-                        name: user.label
-                    })),
-                    repeat: repeatOption,
-                    reminder: reminder
-                }),
-            });
+          const response = await fetch('http://127.0.0.1:5000/addTask', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  name: taskname,
+                  start: moment(startTime).format("YYYY-MM-DD HH:mm"),
+                  end: moment(endTime).format("YYYY-MM-DD HH:mm"),
+                  pending_users: selectedUsers.map(user => ({
+                      id: user.value,
+                      name: user.label
+                  })),
+                  repeat: repeatOption,
+                  reminder: reminder
+              }),
+          });
             if (response.ok) {
                 onClose();
             }

@@ -6,6 +6,7 @@ import Register from './Register';
 import Calendar from './Calendar';
 import HomePage from './HomePage';
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
