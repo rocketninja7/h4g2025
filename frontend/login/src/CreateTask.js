@@ -9,16 +9,16 @@ async function getUsers() {
     return users
 }
 
-export default function CreateTask({start, end, onClose}) {
-  const [users, setUsers] = useState([]);
-  const [taskname, setTaskname] = useState('');
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [repeatOption, setRepeatOption] = useState('never');
-  const [reminder, setReminder] = useState('none');
-  const [startTime, setStartTime] = useState(start);
-  const [endTime, setEndTime] = useState(end);
-  const modalRef = useRef();
-  const [isChatOpen, setIsChatOpen] = useState(false);
+export default function CreateTask({start, end, onClose, updateCalendarState}) {
+    const [users, setUsers] = useState([]);
+    const [taskname, setTaskname] = useState('');
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [repeatOption, setRepeatOption] = useState('never');
+    const [reminder, setReminder] = useState('none');
+    const modalRef = useRef();
+    const [startTime, setStartTime] = useState(start);
+    const [endTime, setEndTime] = useState(end);
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     const repeatOptions = [
         { value: 'never', label: 'Never' },
@@ -96,6 +96,7 @@ export default function CreateTask({start, end, onClose}) {
         } catch (error) {
             console.error('Error:', error);
         }
+        updateCalendarState();
     };
 
     const customStyles = {

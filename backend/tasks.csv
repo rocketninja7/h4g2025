@@ -1,3 +1,8 @@
-time created, time of event, event name, event desc, users involved
-2025-01-20 00:00:00, 2025-01-20 00:00:00, "Task Created", "Task created by user", "pikachu,mewtwo,piplup"
-2025-01-20 00:00:00, 2025-01-20 00:00:00, "Lecture", "@SOC", "mewtwo,piplup"
+id,time_start,time_end,event_name,event_desc
+1,2025-01-07 00:00,2025-01-09 00:00,asdf,
+2,2025-01-14 00:00,2025-01-16 00:00,qwer,
+3,2025-01-21 00:00,2025-01-24 00:00,tre,
+4,2025-01-23 00:00,2025-01-25 00:00,fdsa,
+5,2025-01-29 00:00,2025-01-31 00:00,vcvz,
+6,2025-01-03 00:00,2025-01-05 00:00,gfds,
+7,2025-01-01 00:00,2025-01-03 00:00,few,
