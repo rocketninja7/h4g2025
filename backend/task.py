@@ -4,7 +4,8 @@ from datetime import datetime
 fmt = "%Y-%m-%d %H:%M"
 
 class Task:
-    def __init__(self, name, start, end, pending_users, users):
+    def __init__(self, id, name, start, end, pending_users, users):
+        self.id = id
         self.name = name
         self.start = start
         self.end = end
@@ -13,6 +14,7 @@ class Task:
 
     def jsonify(self):
         jsondict = {
+            "id": self.id,
             "name": self.name,
             "start": self.start.strftime(fmt),
             "end": self.end.strftime(fmt),

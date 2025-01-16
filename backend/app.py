@@ -15,8 +15,8 @@ userlist = [User(1, "pikachu"), User(2, "piplup"), User(3, "mewtwo")]
 
 
 tasks = [
-    Task("Test1", datetime(2025,2,25,13), datetime(2025,2,25,14), [userlist[0],userlist[1]], [userlist[2]]), 
-    Task("Test2", datetime(2025,4,1,8), datetime(2025,4,1,9), [userlist[1],userlist[2]], [userlist[0]])]
+    Task(1, "Test1", datetime(2025,2,25,13), datetime(2025,2,25,14), [userlist[0],userlist[1]], [userlist[2]]), 
+    Task(2, "Test2", datetime(2025,4,1,8), datetime(2025,4,1,9), [userlist[1],userlist[2]], [userlist[0]])]
 
 @app.route("/")
 def main():
@@ -24,7 +24,56 @@ def main():
 
 @app.route("/getTasks/<int:user_id>")
 def getTaskForUser(user_id):
-    return [task.jsonify() for task in tasks]
+    print([task.jsonify() for task in tasks])
+    print([task.jsonify() for task in tasks if user_id in [curr_user.id for curr_user in task.users]])
+    return [task.jsonify() for task in tasks if user_id in [curr_user.id for curr_user in task.users]]
+
+@app.route("/getPendingTasks/<int:user_id>")
+def getPendingTaskForUser(user_id):
+    return [task.jsonify() for task in tasks if user_id in [curr_user.id for curr_user in task.pending_users]]
+
+@app.route("/acceptTask/<int:task_id>", methods=['POST'])
+def acceptTask(task_id):
+    task = [curr_task for curr_task in tasks if curr_task.id == task_id]
+    if len(task) > 1:
+        return jsonify({"message": "There seems to be an error with the database!"}), 500
+    if len(task) == 0:
+        return jsonify({"message": "Task not found"}), 401
+    task = task[0]
+    data = request.json
+    user_id = data.get("id")
+    user = [user for user in userlist if user_id == user.id]
+    if len(user) > 1:
+        return jsonify({"message": "There seems to be an error with the database!"}), 500
+    if len(user) == 0:
+        return jsonify({"message": "User not found"}), 401
+    user = user[0]
+    if user not in task.pending_users:
+        return jsonify({"message": "User is not invited to task or has already responded"}), 403
+    task.users.append(user)
+    task.pending_users.remove(user)
+    return jsonify({"message": "Task accepted successfully"}), 200
+
+@app.route("/rejectTask/<int:task_id>", methods=['POST'])
+def rejectTask(task_id):
+    task = [curr_task for curr_task in tasks if curr_task.id == task_id]
+    if len(task) > 1:
+        return jsonify({"message": "There seems to be an error with the database!"}), 500
+    if len(task) == 0:
+        return jsonify({"message": "Task not found"}), 401
+    task = task[0]
+    data = request.json
+    user_id = data.get("id")
+    user = [user for user in userlist if user_id == user.id]
+    if len(user) > 1:
+        return jsonify({"message": "There seems to be an error with the database!"}), 500
+    if len(user) == 0:
+        return jsonify({"message": "User not found"}), 401
+    user = user[0]
+    if user not in task.pending_users:
+        return jsonify({"message": "User is not invited to task or has already responded"}), 403
+    task.pending_users.remove(user)
+    return jsonify({"message": "Task rejected successfully"}), 200
 
 @app.route('/login', methods=['POST'])
 def login():
