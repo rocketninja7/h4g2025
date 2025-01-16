@@ -5,6 +5,7 @@ from task import *
 from user import *
 import csvfn
 import os
+from chatbot import AIAssistant
 
 app = Flask(__name__)
 CORS(app)
@@ -112,6 +113,36 @@ def addTask():
 
     tasks.append(Task(name, start, end, pending_users, []))
     return jsonify({"message": "Task added successfully"}), 201
+
+ai_assistant = AIAssistant()
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    try:
+        data = request.json
+        message = data.get('message')
+        
+        if not message:
+            return jsonify({'error': 'No message provided'}), 400
+        
+        # Get response from AI assistant
+        response = ai_assistant.get_answer(message)
+        
+        return jsonify({'response': response})
+    
+    except Exception as e:
+        print(f"Error in chat endpoint: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/reset-chat', methods=['POST'])
+def reset_chat():
+    try:
+        ai_assistant.reset_conversation()
+        return jsonify({'message': 'Chat history reset successfully'})
+    except Exception as e:
+        print(f"Error in reset-chat endpoint: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
 
 
 if __name__ == '__main__':

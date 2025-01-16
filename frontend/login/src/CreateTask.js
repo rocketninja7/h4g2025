@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Select from 'react-select';
+import ChatWindow from './ChatWindow';
+import styles from './ChatWindow.module.css'; 
 
 async function getUsers() {
     const res = await fetch("http://127.0.0.1:5000/getUsers")
@@ -14,6 +16,7 @@ export default function CreateTask({start, end, onClose}) {
     const [repeatOption, setRepeatOption] = useState('never');
     const [reminder, setReminder] = useState('none');
     const modalRef = useRef();
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     const repeatOptions = [
         { value: 'never', label: 'Never' },
@@ -224,12 +227,19 @@ export default function CreateTask({start, end, onClose}) {
                             placeholder="Select reminder..."
                         />
                     </div>
-
+                    <button className="action-button" 
+                                onClick={() => setIsChatOpen(true)}>
+                        AI Assistant
+                    </button>
                     <button type="submit" style={customStyles.button}>
                         Create Task
                     </button>
                 </form>
             </div>
+            <ChatWindow 
+                isOpen={isChatOpen} 
+                onClose={() => setIsChatOpen(false)} 
+            />
         </div>
     );
 }
