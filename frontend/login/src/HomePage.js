@@ -66,7 +66,7 @@ const HomePage = () => {
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                     className="menu-button"
                 >
-                    ☰
+                   <span>☰</span>
                 </button>
                 <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Dashboard</h1>
                 <div className="header-right">

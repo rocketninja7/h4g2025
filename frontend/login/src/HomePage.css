@@ -20,8 +20,8 @@ body, #root {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #4f46e5;
-    color: #fff;
+    background-color: white;
+    color: black;
     padding: 1rem;
     width: 100%;
     box-sizing: border-box;
@@ -33,6 +33,10 @@ body, #root {
     color: #fff;
     font-size: 1.5rem;
     cursor: pointer;
+}
+.menu-button span {
+    color: black;  /* This will ensure the icon is visible against the purple background */
+    font-size: 1.5rem;
 }
 
 .main-content {
