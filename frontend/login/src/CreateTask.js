@@ -26,7 +26,7 @@ export default function CreateTask({start, end}) {
     const handleTaskCreation = async (e) => {
         // e.preventDefault();
         try {
-          const response = await fetch('http://127.0.0.1:5000/addTask', {
+            const response = await fetch('http://127.0.0.1:5000/addTask', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: taskname, start, end, pending_users: users.map(user => ({
