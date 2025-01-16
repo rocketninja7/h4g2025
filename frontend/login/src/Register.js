@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "./App.css"
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -33,7 +34,8 @@ function Register() {
   };
 
   return (
-    <div className="App">
+    <div className="login-container">
+      <div className="login-form">
       <header className="App-header">
         <h1>Register</h1>
         <form onSubmit={handleRegister} className="register-form">
@@ -76,14 +78,15 @@ function Register() {
             />
             <label htmlFor="show-password">Show Password</label>
           </div>
-          <button type="submit" className="register-button">
+          <button type="submit" className="button login-button">
             Register
           </button>
         </form>
-        <button onClick={navigateToLogin} className="login-button back-button">
+        <button onClick={navigateToLogin} className="button register-button">
           Back to Login
         </button>
       </header>
+    </div>
     </div>
   );
 }
