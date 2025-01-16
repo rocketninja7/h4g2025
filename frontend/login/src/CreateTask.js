@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Select from 'react-select';
 
 async function getUsers() {
@@ -7,9 +7,29 @@ async function getUsers() {
     return users
 }
 
-export default function CreateTask({start, end}) {
-    const [users, setUsers] = useState([])
+export default function CreateTask({start, end, onClose}) {
+    const [users, setUsers] = useState([]);
     const [taskname, setTaskname] = useState('');
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [repeatOption, setRepeatOption] = useState('never');
+    const [reminder, setReminder] = useState('none');
+    const modalRef = useRef();
+
+    const repeatOptions = [
+        { value: 'never', label: 'Never' },
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+    ];
+
+    const reminderOptions = [
+        { value: 'none', label: 'None' },
+        { value: '5min', label: '5 minutes before' },
+        { value: '15min', label: '15 minutes before' },
+        { value: '30min', label: '30 minutes before' },
+        { value: '1hour', label: '1 hour before' },
+        { value: '1day', label: '1 day before' }
+    ];
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -21,55 +41,195 @@ export default function CreateTask({start, end}) {
             setUsers(formattedUsers)
         }
         fetchUsers()
-    }, [])
+
+        // Add click outside listener
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [onClose]);
 
     const handleTaskCreation = async (e) => {
-        // e.preventDefault();
+        e.preventDefault();
         try {
-          const response = await fetch('http://127.0.0.1:5000/addTask', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: taskname, start, end, pending_users: users.map(user => ({
-                id: user.value,
-                name: user.label
-            }))}),
-          });
-        //   const data = await response.json();
-        //   alert(data.message);
+            const response = await fetch('http://127.0.0.1:5000/addTask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: taskname,
+                    start,
+                    end,
+                    pending_users: selectedUsers.map(user => ({
+                        id: user.value,
+                        name: user.label
+                    })),
+                    repeat: repeatOption,
+                    reminder: reminder
+                }),
+            });
+            if (response.ok) {
+                onClose();
+            }
         } catch (error) {
-          console.error('Error:', error);
+            console.error('Error:', error);
         }
-      };
+    };
 
-    const styles = {
-        // theme: "primary"
-    }
+    const customStyles = {
+        modal: {
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '24px',
+            width: '400px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            zIndex: 1000
+        },
+        overlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 999
+        },
+        form: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px'
+        },
+        formGroup: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px'
+        },
+        label: {
+            fontSize: '14px',
+            fontWeight: '500',
+            color: '#374151'
+        },
+        input: {
+            padding: '8px 12px',
+            borderRadius: '6px',
+            border: '1px solid #e5e7eb',
+            fontSize: '14px'
+        },
+        select: {
+            control: (base) => ({
+                ...base,
+                borderRadius: '6px',
+                border: '1px solid #e5e7eb'
+            })
+        },
+        button: {
+            backgroundColor: '#10B981',
+            color: 'white',
+            padding: '10px 16px',
+            borderRadius: '6px',
+            border: 'none',
+            fontSize: '14px',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s',
+            marginTop: '8px'
+        },
+        timeGroup: {
+            display: 'flex',
+            gap: '16px',
+            alignItems: 'center'
+        },
+        timeLabel: {
+            fontSize: '14px',
+            color: '#6B7280',
+            minWidth: '60px'
+        }
+    };
 
     return (
-        <div>
-          <h1>Create Task</h1>
-          <form onSubmit={handleTaskCreation}>
-            <div className="form-group">
-              <label>Task name:</label>
-              <input
-                type="text"
-                id="taskname"
-                value={taskname}
-                onChange={(e) => setTaskname(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>People involved:</label>
-              <Select 
-                options={users}
-                styles={styles}
-                isMulti
-              />
-            </div>
-            <button type="submit" className="button login-button">Create Task</button>
-          </form>
-        </div>
-      );
-}
+        <div style={customStyles.overlay}>
+            <div ref={modalRef} style={customStyles.modal}>
+                <h2 style={{ margin: '0 0 20px 0', color: '#111827' }}>Create Task</h2>
+                <form onSubmit={handleTaskCreation} style={customStyles.form}>
+                    <div style={customStyles.formGroup}>
+                        <label style={customStyles.label}>Task name:</label>
+                        <input
+                            type="text"
+                            value={taskname}
+                            onChange={(e) => setTaskname(e.target.value)}
+                            required
+                            style={customStyles.input}
+                            placeholder="Enter task name"
+                        />
+                    </div>
 
+                    <div style={customStyles.formGroup}>
+                        <label style={customStyles.label}>Time:</label>
+                        <div style={customStyles.timeGroup}>
+                            <span style={customStyles.timeLabel}>Start:</span>
+                            <input
+                                type="datetime-local"
+                                value={start}
+                                readOnly
+                                style={customStyles.input}
+                            />
+                        </div>
+                        <div style={customStyles.timeGroup}>
+                            <span style={customStyles.timeLabel}>End:</span>
+                            <input
+                                type="datetime-local"
+                                value={end}
+                                readOnly
+                                style={customStyles.input}
+                            />
+                        </div>
+                    </div>
+
+                    <div style={customStyles.formGroup}>
+                        <label style={customStyles.label}>People involved:</label>
+                        <Select
+                            options={users}
+                            styles={customStyles.select}
+                            isMulti
+                            value={selectedUsers}
+                            onChange={setSelectedUsers}
+                            placeholder="Select people..."
+                        />
+                    </div>
+
+                    <div style={customStyles.formGroup}>
+                        <label style={customStyles.label}>Repeat:</label>
+                        <Select
+                            options={repeatOptions}
+                            styles={customStyles.select}
+                            value={repeatOptions.find(option => option.value === repeatOption)}
+                            onChange={(option) => setRepeatOption(option.value)}
+                            placeholder="Select repeat option..."
+                        />
+                    </div>
+
+                    <div style={customStyles.formGroup}>
+                        <label style={customStyles.label}>Reminder:</label>
+                        <Select
+                            options={reminderOptions}
+                            styles={customStyles.select}
+                            value={reminderOptions.find(option => option.value === reminder)}
+                            onChange={(option) => setReminder(option.value)}
+                            placeholder="Select reminder..."
+                        />
+                    </div>
+
+                    <button type="submit" style={customStyles.button}>
+                        Create Task
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+}
