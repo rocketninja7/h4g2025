@@ -4,6 +4,7 @@ import './HomePage.css';
 import { useNavigate } from 'react-router-dom';
 import ChatWindow from './ChatWindow';
 import styles from './ChatWindow.module.css'; 
+import CreateTask from './CreateTask';
 
 
 const HomePage = () => {
