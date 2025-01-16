@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react'
 import CreateTask from './CreateTask'
 import moment from 'moment';
 import Notifications from './Notifications';
+import { useLocation } from 'react-router-dom';
 
 
 export default function Calendar() {
@@ -11,6 +12,14 @@ export default function Calendar() {
     const [end, setEnd] = useState(null)
     const [calendarState, setCalendarState] = useState(0)
     const [showModal, setShowModal] = useState(false)  // Add this line
+    const location = useLocation();
+    const { username, id } = location.state || {};
+
+    async function getTasks() {
+        const res = await fetch("http://127.0.0.1:5000/getTasks/" + id)
+        const tasks = await res.json()
+        return tasks
+    }
 
     const fetchTasks = async () => {
         const fetchedTasks = await getTasks()
@@ -60,7 +69,7 @@ export default function Calendar() {
                 handleSelectSlot={handleSelectSlot} 
                 handleSelectEvent={handleSelectEvent} 
             />
-            <Notifications updateCalendarState={updateCalendarState} />
+            <Notifications updateCalendarState={updateCalendarState} userId={id} />
             {showModal && start && end && (  // Update this condition
                 <CreateTask 
                     start={moment(start).format("YYYY-MM-DD HH:mm")} 
@@ -71,10 +80,4 @@ export default function Calendar() {
             )}
         </div>
     )
-}
-
-async function getTasks() {
-    const res = await fetch("http://127.0.0.1:5000/getTasks/1")
-    const tasks = await res.json()
-    return tasks
 }

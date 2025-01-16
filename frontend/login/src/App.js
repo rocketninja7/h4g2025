@@ -19,7 +19,7 @@ function App() {
       const data = await response.json();
 
       if (response.ok) {
-        navigate('/homepage', { state: { username } });
+        navigate('/homepage', { state: { username, id: data.id } });
       } else {
         alert(data.message);
       }
