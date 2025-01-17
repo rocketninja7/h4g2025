@@ -3,18 +3,18 @@ from flask_cors import CORS
 from datetime import datetime
 from task import *
 from user import *
+from message import Message
 import csvfn
 import os
 from chatbot import AIAssistant
+from csvfn import get_users, get_tasks, write_tasks, get_messages, write_messages
 
 app = Flask(__name__)
 CORS(app)
 
 users, userlist = csvfn.get_users()
-print(users)
-
 tasks = csvfn.get_tasks(userlist, [])
-print(tasks)
+messages = csvfn.get_messages()  # Add this line
 
 @app.route("/")
 def main():
@@ -192,6 +192,29 @@ def deleteTask(task_id):
     csvfn.write_tasks(tasks)
     return jsonify({"message": "Task deleted successfully"}), 200
 
+messages = get_messages()
+
+@app.route('/getMessages/<int:user_id>', methods=['GET'])
+def get_user_messages(user_id):
+    user_messages = [
+        msg.jsonify() for msg in messages 
+        if msg.sender_id == user_id or msg.receiver_id == user_id
+    ]
+    return jsonify(user_messages)
+
+@app.route('/sendMessage', methods=['POST'])
+def send_message():
+    data = request.json
+    new_message = Message(
+        id=len(messages) + 1,
+        sender_id=data['sender_id'],
+        receiver_id=data['receiver_id'],
+        content=data['content'],
+        timestamp=datetime.now()
+    )
+    messages.append(new_message)
+    write_messages(messages)
+    return jsonify({"message": "Message sent successfully"}), 201
 
 if __name__ == '__main__':
     app.run(debug=True)

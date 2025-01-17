@@ -20,7 +20,7 @@ body, #root {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
+    background-color: #f3f4f6;
     color: black;
     padding: 1rem;
     width: 100%;
@@ -162,4 +162,106 @@ body, #root {
 
 .action-button:hover {
     background-color: #4338ca;
+}
+
+/* Add to your HomePage.css */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.card-header h2 {
+    margin: 0;
+}
+
+.new-chat-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+    transition: background-color 0.2s;
+}
+
+.new-chat-button:hover {
+    background: #0056b3;
+}
+
+.chat-list {
+    padding: 10px;
+}
+
+.chat-user-item {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.chat-user-item:hover {
+    background-color: #f8f9fa;
+}
+
+.chat-user-name {
+    font-weight: 500;
+    color: #212529;
+}
+
+.no-chats {
+    text-align: center;
+    color: #6c757d;
+    padding: 20px;
+}
+
+/* Update modal styles */
+.user-list-modal {
+    background: white;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.user-list-modal .modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-list-modal h2 {
+    margin: 0;
+}
+
+.user-list {
+    padding: 15px;
+}
+
+.user-item {
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-item:hover {
+    background-color: #f8f9fa;
 }

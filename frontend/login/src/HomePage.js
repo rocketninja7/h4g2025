@@ -8,6 +8,7 @@ import ModernCalendar from './CalendarComponent';
 import { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import Notifications from './Notifications';
+import UserChat from './UserChat';
 
 const HomePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,6 +18,11 @@ const HomePage = () => {
     const [upcomingTasks, setUpcomingTasks] = useState([]);
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [showUserList, setShowUserList] = useState(false);
+    const [userList, setUserList] = useState([]);
+    const [chatUsers, setChatUsers] = useState([]);
+    
 
     const navigate = useNavigate();
     const navigateToLogin = () => {
@@ -62,6 +68,53 @@ const HomePage = () => {
             minute: '2-digit'
         });
     };
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/getUsers');
+                const users = await response.json();
+                setUserList(users);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+        fetchUsers();
+    }, []);
+    useEffect(() => {
+        const fetchChatUsers = async () => {
+            try {
+                // Fetch all messages
+                const messagesResponse = await fetch(`http://127.0.0.1:5000/getMessages/${id}`);
+                const messages = await messagesResponse.json();
+                
+                // Get unique user IDs from messages (excluding current user)
+                const uniqueUserIds = new Set();
+                messages.forEach(message => {
+                    if (message.sender_id === id) {
+                        uniqueUserIds.add(message.receiver_id);
+                    } else if (message.receiver_id === id) {
+                        uniqueUserIds.add(message.sender_id);
+                    }
+                });
+                
+                // Fetch user details for these IDs
+                const usersResponse = await fetch('http://127.0.0.1:5000/getUsers');
+                const allUsers = await usersResponse.json();
+                
+                // Filter users to only those you've chatted with
+                const chatUsersList = allUsers.filter(user => 
+                    uniqueUserIds.has(user.id)
+                );
+                
+                setChatUsers(chatUsersList);
+                setUserList(allUsers.filter(user => user.id !== id));
+            } catch (error) {
+                console.error('Error fetching chat users:', error);
+            }
+        };
+    
+        fetchChatUsers();
+    }, [id]);
 
     return (
         <div className="container">
@@ -81,7 +134,7 @@ const HomePage = () => {
                     )}
                 </div>
             </div>
-
+    
             <div className="main-content">
                 <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
                     <ul className="sidebar-list">
@@ -91,7 +144,7 @@ const HomePage = () => {
                         <li className="sidebar-item" onClick={navigateToLogin}>Logout</li>
                     </ul>
                 </div>
-
+    
                 <div className={`content ${isSidebarOpen ? 'sidebar-open' : ''}`}>
                     <div className="welcome-section">
                         <h1 className="welcome-title">Welcome to Your Dashboard</h1>
@@ -105,7 +158,9 @@ const HomePage = () => {
                             >
                                 Create New Task
                             </button>
-                            <button className="action-button" onClick={navigateToCalendar}>View Calendar</button>
+                            <button className="action-button" onClick={navigateToCalendar}>
+                                View Calendar
+                            </button>
                             <button 
                                 className="action-button" 
                                 onClick={() => setIsChatOpen(true)}
@@ -114,10 +169,12 @@ const HomePage = () => {
                             </button>
                         </div>
                     </div>
-
+    
                     <div className="grid">
                         <div className="card">
-                            <h2 className="card-title">Upcoming Tasks</h2>
+                            <div className="card-header">
+                                <h2 className="card-title">Upcoming Tasks</h2>
+                            </div>
                             <ul className="task-list">
                                 {upcomingTasks.map((task, index) => (
                                     <li key={index} className="task-item">
@@ -130,9 +187,11 @@ const HomePage = () => {
                                 )}
                             </ul>
                         </div>
-
+    
                         <div className="card">
-                            <h2 className="card-title">Recent Tasks</h2>
+                            <div className="card-header">
+                                <h2 className="card-title">Recent Tasks</h2>
+                            </div>
                             <ul className="task-list">
                                 {recentTasks.map((task, index) => (
                                     <li key={index} className="task-item">
@@ -145,17 +204,41 @@ const HomePage = () => {
                                 )}
                             </ul>
                         </div>
-
+    
                         <div className="card">
-                            <h2 className="card-title">Requests</h2>
-                            <ul className="task-list">
-                                <Notifications updateCalendarState={fetchTasks} userId={id} />
-                            </ul>
+                            <div className="card-header">
+                                <h2 className="card-title">Chats</h2>
+                                <button 
+                                    className="new-chat-button"
+                                    onClick={() => setShowUserList(true)}
+                                    title="Start New Chat"
+                                >
+                                    <span>+</span>
+                                </button>
+                            </div>
+                            <div className="chat-list">
+                                {chatUsers.map((user) => (
+                                    <div
+                                        key={user.id}
+                                        className="chat-user-item"
+                                        onClick={() => {
+                                            setSelectedUser(user);
+                                            setIsChatOpen(true);
+                                        }}
+                                    >
+                                        <div className="chat-user-name">{user.name}</div>
+                                    </div>
+                                ))}
+                                {chatUsers.length === 0 && (
+                                    <div className="no-chats">No conversations yet</div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
+    
+            {/* Task creation modal */}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -166,11 +249,57 @@ const HomePage = () => {
                     </div>
                 </div>
             )}
-
+    
+            {/* User selection modal for new chat */}
+            {showUserList && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="user-list-modal">
+                            <div className="modal-header">
+                                <h2>Start New Chat</h2>
+                                <button className="close-button" onClick={() => setShowUserList(false)}>&times;</button>
+                            </div>
+                            <div className="user-list">
+                                {userList
+                                    .filter(user => !chatUsers.find(chatUser => chatUser.id === user.id))
+                                    .map(user => (
+                                        <div
+                                            key={user.id}
+                                            className="user-item"
+                                            onClick={() => {
+                                                setSelectedUser(user);
+                                                setIsChatOpen(true);
+                                                setShowUserList(false);
+                                            }}
+                                        >
+                                            {user.name}
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+    
+            {/* AI Assistant chat window */}
             <ChatWindow 
                 isOpen={isChatOpen} 
                 onClose={() => setIsChatOpen(false)} 
             />
+    
+            {/* User chat window */}
+            {selectedUser && (
+                <UserChat
+                    isOpen={isChatOpen}
+                    onClose={() => {
+                        setIsChatOpen(false);
+                        setSelectedUser(null);
+                    }}
+                    currentUserId={id}
+                    selectedUserId={selectedUser.id}
+                    selectedUserName={selectedUser.name}
+                />
+            )}
         </div>
     );
 };

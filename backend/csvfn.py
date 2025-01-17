@@ -99,3 +99,38 @@ def write_tasks(tasks):
 
 
 # print(get_tasks())
+
+def get_messages():
+    messages = []
+    try:
+        with open('messages.csv', 'r', newline='') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header
+            for row in reader:
+                message = Message(
+                    int(row[0]),  # id
+                    int(row[1]),  # sender_id
+                    int(row[2]),  # receiver_id
+                    row[3],       # content
+                    datetime.strptime(row[4], "%Y-%m-%d %H:%M:%S")  # timestamp
+                )
+                messages.append(message)
+    except FileNotFoundError:
+        # Create messages.csv with headers if it doesn't exist
+        with open('messages.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['id', 'sender_id', 'receiver_id', 'content', 'timestamp'])
+    return messages
+
+def write_messages(messages):
+    with open('messages.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['id', 'sender_id', 'receiver_id', 'content', 'timestamp'])
+        for message in messages:
+            writer.writerow([
+                message.id,
+                message.sender_id,
+                message.receiver_id,
+                message.content,
+                message.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+            ])
