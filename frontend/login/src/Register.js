@@ -50,6 +50,14 @@ function Register() {
             />
           </div>
           <div className="form-group">
+            <label>Administrator's code:</label>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="admin-code"
+              required
+            />
+          </div>
+          <div className="form-group">
             <label htmlFor="password">Password:</label>
             <input
               type={showPassword ? 'text' : 'password'}
@@ -77,14 +85,6 @@ function Register() {
               onChange={() => setShowPassword(!showPassword)}
             />
             <label htmlFor="show-password">Show Password</label>
-          </div>
-          <div className="form-group">
-            <label>Administrator's code:</label>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id="admin-code"
-              required
-            />
           </div>
           <button type="submit" className="button login-button">
             Register
