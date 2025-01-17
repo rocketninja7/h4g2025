@@ -1,15 +1,16 @@
 # SBC-PA
 
 This project is a PA system built for SBC. It has the following features:
-- A login page
+- Login and registration pages
 - A home page where users can see upcoming tasks
 - A calendar view where users can see all their tasks
 - A page to invite people to tasks
 - A notification panel where users can accept/reject tasks
+- A chat functionality for users to discuss scheduling plans
+- An AI chatbot to provide scheduling advice
 
 Work in progress:
 - Alert and reminder system
-- AI chatbot
 - Recommending tasks based on past tasks
 - Email summarisation
 - Auto accepting/rejecting tasks
@@ -49,3 +50,5 @@ pikachu:pikachu
 piplup:piplup
 mewtwo:mewtwo
 ```
+
+Note that currently there is no user validation for our API endpoints, which will be added in the future.
