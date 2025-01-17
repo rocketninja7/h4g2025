@@ -106,8 +106,21 @@ def addTask():
     name = data.get("name")
     start = datetime.strptime(data.get("start"), fmt)
     end = datetime.strptime(data.get("end"), fmt)
-    pending_users = [[finduser for finduser in userlist if finduser.id == user.get("id")][0] for user in data.get("pending_users")]
-    tasks.append(Task(len(tasks) + 1, name, "", start, end, pending_users, []))
+    creator_id = data.get("creator_id")  # Get the creator's ID
+    
+    # Find the creator user object
+    creator = [user for user in userlist if user.id == creator_id][0]
+    
+    # Filter out creator from pending users list if present
+    pending_users = [
+        [user for user in userlist if user.id == pending_user.get("id")][0]
+        for pending_user in data.get("pending_users")
+        if pending_user.get("id") != creator_id
+    ]
+    
+    # Create new task with creator in confirmed users list
+    new_task = Task(len(tasks) + 1, name, "", start, end, pending_users, [creator])
+    tasks.append(new_task)
     csvfn.write_tasks(tasks)
     return jsonify({"message": "Task added successfully"}), 201
 
@@ -140,6 +153,44 @@ def reset_chat():
         print(f"Error in reset-chat endpoint: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
+@app.route('/updateTask/<int:task_id>', methods=['PUT'])
+def updateTask(task_id):
+    task = [curr_task for curr_task in tasks if curr_task.id == task_id]
+    if len(task) > 1:
+        return jsonify({"message": "There seems to be an error with the database!"}), 500
+    if len(task) == 0:
+        return jsonify({"message": "Task not found"}), 401
+    
+    task = task[0]
+    data = request.json
+    
+    # Update task details
+    task.name = data.get('name', task.name)
+    task.start = datetime.strptime(data.get('start'), fmt)
+    task.end = datetime.strptime(data.get('end'), fmt)
+    
+    # Update pending users
+    new_pending_users = []
+    for user_data in data.get('pending_users', []):
+        user = [u for u in userlist if u.id == user_data['id']]
+        if user:
+            new_pending_users.append(user[0])
+    task.pending_users = new_pending_users
+    
+    csvfn.write_tasks(tasks)
+    return jsonify({"message": "Task updated successfully"}), 200
+
+@app.route('/deleteTask/<int:task_id>', methods=['DELETE'])
+def deleteTask(task_id):
+    task = [curr_task for curr_task in tasks if curr_task.id == task_id]
+    if len(task) > 1:
+        return jsonify({"message": "There seems to be an error with the database!"}), 500
+    if len(task) == 0:
+        return jsonify({"message": "Task not found"}), 401
+    
+    tasks.remove(task[0])
+    csvfn.write_tasks(tasks)
+    return jsonify({"message": "Task deleted successfully"}), 200
 
 
 if __name__ == '__main__':
