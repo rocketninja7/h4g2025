@@ -9,6 +9,7 @@ import { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import Notifications from './Notifications';
 import UserChat from './UserChat';
+import UserSearchModal from './UserSearchModal';
 
 const HomePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,6 +23,7 @@ const HomePage = () => {
     const [showUserList, setShowUserList] = useState(false);
     const [userList, setUserList] = useState([]);
     const [chatUsers, setChatUsers] = useState([]);
+    const [isUserChatOpen, setIsUserChatOpen] = useState(false);  // For User Chat
     
 
     const navigate = useNavigate();
@@ -234,7 +236,7 @@ const HomePage = () => {
                     className="chat-user-item"
                     onClick={() => {
                         setSelectedUser(user);
-                        setIsChatOpen(true);
+                        setIsUserChatOpen(true);  // Make sure this is set to true
                     }}
                 >
                     <div className="chat-user-name">{user.name}</div>
@@ -261,58 +263,38 @@ const HomePage = () => {
                 </div>
             )}
     
-            {/* User selection modal for new chat */}
-            {showUserList && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <div className="user-list-modal">
-                            <div className="modal-header">
-                                <h2>Start New Chat</h2>
-                                <button className="close-button" onClick={() => setShowUserList(false)}>&times;</button>
-                            </div>
-                            <div className="user-list">
-                                {userList
-                                    .filter(user => !chatUsers.find(chatUser => chatUser.id === user.id))
-                                    .map(user => (
-                                        <div
-                                            key={user.id}
-                                            className="user-item"
-                                            onClick={() => {
-                                                setSelectedUser(user);
-                                                setIsChatOpen(true);
-                                                setShowUserList(false);
-                                            }}
-                                        >
-                                            {user.name}
-                                        </div>
-                                    ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-    
+    {showUserList && (
+    <UserSearchModal
+        users={userList.filter(user => !chatUsers.find(chatUser => chatUser.id === user.id))}
+        onClose={() => setShowUserList(false)}
+        onSelectUser={(user) => {
+            setSelectedUser(user);
+            setIsUserChatOpen(true);
+            setShowUserList(false);
+        }}
+    />
+)}
+
+{/* User chat window */}
+{selectedUser && (
+    <UserChat
+        isOpen={isUserChatOpen}
+        onClose={() => {
+            setIsUserChatOpen(false);
+            setSelectedUser(null);
+        }}
+        currentUserId={id}
+        selectedUserId={selectedUser.id}
+        selectedUserName={selectedUser.name}
+    />
+)}
             {/* AI Assistant chat window */}
             <ChatWindow 
                 isOpen={isChatOpen} 
                 onClose={() => setIsChatOpen(false)} 
             />
     
-            {/* User chat window */}
-            {selectedUser && (
-                <UserChat
-                    isOpen={isChatOpen}
-                    onClose={() => {
-                        setIsChatOpen(false);
-                        setSelectedUser(null);
-                    }}
-                    currentUserId={id}
-                    selectedUserId={selectedUser.id}
-                    selectedUserName={selectedUser.name}
-                />
-            )}
         </div>
     );
 };
-
 export default HomePage;
