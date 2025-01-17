@@ -6,6 +6,7 @@ from user import *
 import csvfn
 import os
 from chatbot import AIAssistant
+import csv
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +16,66 @@ print(users)
 
 tasks = csvfn.get_tasks(userlist, [])
 print(tasks)
+
+# Chat history storage (in-memory)
+chat_history = []
+
+# Ensure chathistory.csv exists
+CHAT_HISTORY_FILE = 'chathistory.csv'
+if not os.path.exists(CHAT_HISTORY_FILE):
+    with open(CHAT_HISTORY_FILE, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(['SenderID', 'RecipientID', 'Message', 'Timestamp'])  # Add headers
+
+@app.route('/sendMessage', methods=['POST'])
+def send_message():
+    """Send a message between users and save it to chat history."""
+    data = request.json
+    sender_id = data.get("senderId")
+    recipient_id = data.get("recipientId")
+    message = data.get("message")
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    if not sender_id or not recipient_id or not message:
+        return jsonify({"error": "Invalid data"}), 400
+
+    # Save message to in-memory history
+    chat_history.append({
+        "senderId": sender_id,
+        "recipientId": recipient_id,
+        "message": message,
+        "timestamp": timestamp,
+    })
+
+    # Save message to CSV
+    with open(CHAT_HISTORY_FILE, 'a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow([sender_id, recipient_id, message, timestamp])
+
+    return jsonify({"message": "Message sent successfully"}), 200
+
+@app.route('/getChatHistory/<int:user_id>/<int:recipient_id>', methods=['GET'])
+def get_chat_history(user_id, recipient_id):
+    """Retrieve chat history between two users."""
+    chat_data = []
+
+    # Load chat history from CSV
+    with open(CHAT_HISTORY_FILE, 'r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            if (
+                (int(row['SenderID']) == user_id and int(row['RecipientID']) == recipient_id) or
+                (int(row['SenderID']) == recipient_id and int(row['RecipientID']) == user_id)
+            ):
+                chat_data.append({
+                    "senderId": int(row['SenderID']),
+                    "recipientId": int(row['RecipientID']),
+                    "message": row['Message'],
+                    "timestamp": row['Timestamp'],
+                })
+
+    return jsonify(chat_data), 200
+
 
 @app.route("/")
 def main():

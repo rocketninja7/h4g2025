@@ -2,7 +2,8 @@ import { useLocation } from 'react-router-dom';
 import './HomePage.css';
 import { useNavigate } from 'react-router-dom';
 import ChatWindow from './ChatWindow';
-import styles from './ChatWindow.module.css'; 
+import UserChatWindow from './UserChatWindow'; // Import User-to-User Chat Component
+import styles from './ChatWindow.module.css';
 import CreateTask from './CreateTask';
 import ModernCalendar from './CalendarComponent';
 import { useEffect, useState, useCallback } from 'react';
@@ -15,7 +16,8 @@ const HomePage = () => {
     const { username, id } = location.state || {};
     const [recentTasks, setRecentTasks] = useState([]);
     const [upcomingTasks, setUpcomingTasks] = useState([]);
-    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(false); // AI Chatbot
+    const [isUserChatOpen, setIsUserChatOpen] = useState(false); // User-to-User Chat
     const [showModal, setShowModal] = useState(false);
 
     const navigate = useNavigate();
@@ -88,6 +90,7 @@ const HomePage = () => {
                         <li className="sidebar-item" onClick={navigateToHome}>Dashboard</li>
                         <li className="sidebar-item" onClick={navigateToCalendar}>Calendar</li>
                         <li className="sidebar-item" onClick={() => setIsChatOpen(true)}>Get Help</li>
+                        <li className="sidebar-item" onClick={() => setIsUserChatOpen(true)}>Chat with Users</li>
                         <li className="sidebar-item" onClick={navigateToLogin}>Logout</li>
                     </ul>
                 </div>
@@ -111,6 +114,12 @@ const HomePage = () => {
                                 onClick={() => setIsChatOpen(true)}
                             >
                                 AI Assistant
+                            </button>
+                            <button 
+                                className="action-button" 
+                                onClick={() => setIsUserChatOpen(true)}
+                            >
+                                User Chat
                             </button>
                         </div>
                     </div>
@@ -167,9 +176,17 @@ const HomePage = () => {
                 </div>
             )}
 
+            {/* AI Assistant */}
             <ChatWindow 
                 isOpen={isChatOpen} 
                 onClose={() => setIsChatOpen(false)} 
+            />
+
+            {/* User-to-User Chat */}
+            <UserChatWindow 
+                isOpen={isUserChatOpen} 
+                onClose={() => setIsUserChatOpen(false)} 
+                userId={id} 
             />
         </div>
     );
