@@ -11,17 +11,17 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const localizer = momentLocalizer(moment);
     const location = useLocation();
-    const { username } = location.state || {};
+    const { username, id } = location.state || {};
     const [isChatOpen, setIsChatOpen] = useState(false);
     const navigate = useNavigate();
     const navigateToLogin = () => {
         navigate('/');
     };
     const navigateToHome = () => {
-        navigate('/homepage', { state: { username } });
+        navigate('/homepage', { state: { username, id } });
     };
     const navigateToCalendar = () => {
-        navigate('/calendar', { state: { username } });
+        navigate('/calendar', { state: { username, id } });
     };
 
     const allViews = {
