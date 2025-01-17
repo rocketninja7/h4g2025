@@ -4,11 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import ChatWindow from './ChatWindow';
 import styles from './ChatWindow.module.css'; 
 import CreateTask from './CreateTask';
-import ModernCalendar from './CalendarComponent'
-import { useEffect, useState, useCallback } from 'react'
+import ModernCalendar from './CalendarComponent';
+import { useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import Notifications from './Notifications';
-
 
 const HomePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,6 +16,7 @@ const HomePage = () => {
     const [recentTasks, setRecentTasks] = useState([]);
     const [upcomingTasks, setUpcomingTasks] = useState([]);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const navigate = useNavigate();
     const navigateToLogin = () => {
@@ -28,76 +28,28 @@ const HomePage = () => {
     const navigateToCalendar = () => {
         navigate('/calendar', { state: { username, id } });
     };
-    const [tasks, setTasks] = useState([])
-    const [start, setStart] = useState(null)
-    const [end, setEnd] = useState(null)
-    const [calendarState, setCalendarState] = useState(0)
-    const [showModal, setShowModal] = useState(false)  // Add this line
-
-    async function getTasks() {
-        const res = await fetch("http://127.0.0.1:5000/getTasks/" + id)
-        const tasks = await res.json()
-        return tasks
-    }
 
     const fetchTasks = async () => {
-        const fetchedTasks = await getTasks()
-        const formattedTasks = fetchedTasks.map(task => ({
-            title: task.name,
-            start: moment(task.start, "YYYY-MM-DD HH:mm").toDate(),
-            end: moment(task.end, "YYYY-MM-DD HH:mm").toDate()
-        }))
-        setTasks(formattedTasks)
-    }
+        try {
+            const res = await fetch(`http://127.0.0.1:5000/getTasks/${id}`);
+            const tasks = await res.json();
+            const now = new Date();
 
-    const handleSelectSlot = useCallback(
-        ({ start, end }) => {
-            setStart(start)
-            setEnd(end)
-            setShowModal(true)  // Add this line
-        },
-        []
-    )
+            const upcoming = tasks.filter(task => new Date(task.start) > now).slice(0, 5);
+            const recent = tasks.filter(task => new Date(task.start) <= now).slice(0, 5);
 
-    const handleSelectEvent = useCallback(
-        (event) => window.alert(event.title),
-        []
-    )
+            setUpcomingTasks(upcoming);
+            setRecentTasks(recent);
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+        }
+    };
 
-    const updateCalendarState = () => {
-        fetchTasks()
-        setCalendarState(calendarState + 1)
-    }
-    
-    const handleCloseModal = useCallback(() => {  // Add this function
-        setShowModal(false)
-        setStart(null)
-        setEnd(null)
-    }, [])
+    const handleCloseModal = useCallback(() => {
+        setShowModal(false);
+    }, []);
 
     useEffect(() => {
-        fetchTasks()
-    }, [])
-    useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                const res = await fetch("http://127.0.0.1:5000/getTasks/1");
-                const tasks = await res.json();
-                
-                const now = new Date();
-                const upcoming = tasks
-                    .filter(task => new Date(task.start) > now)
-                    .slice(0, 5);
-                const recent = tasks
-                    .filter(task => new Date(task.start) <= now)
-                    .slice(0, 5);
-
-                setUpcomingTasks(upcoming);
-                setRecentTasks(recent);
-            } catch (error) {
-                console.error('Error fetching tasks:', error);
-            }
-        };
         fetchTasks();
     }, []);
 
@@ -147,7 +99,12 @@ const HomePage = () => {
                             Here's an overview of your tasks and activities
                         </p>
                         <div className="quick-actions">
-                            <button className="action-button">Create New Task</button>
+                            <button 
+                                className="action-button" 
+                                onClick={() => setShowModal(true)}
+                            >
+                                Create New Task
+                            </button>
                             <button className="action-button" onClick={navigateToCalendar}>View Calendar</button>
                             <button 
                                 className="action-button" 
@@ -188,22 +145,28 @@ const HomePage = () => {
                                 )}
                             </ul>
                         </div>
+
                         <div className="card">
                             <h2 className="card-title">Requests</h2>
                             <ul className="task-list">
-                                <Notifications updateCalendarState={updateCalendarState} userId={id} />
-                                    {showModal && start && end && (  // Update this condition
-                                        <CreateTask 
-                                            start={moment(start).format("YYYY-MM-DD HH:mm")} 
-                                            end={moment(end).format("YYYY-MM-DD HH:mm")}
-                                            onClose={handleCloseModal}  // Pass the handler
-                                            updateCalendarState={updateCalendarState}
-                                        /> )}
+                                <Notifications updateCalendarState={fetchTasks} userId={id} />
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <CreateTask 
+                            onClose={handleCloseModal} 
+                            updateCalendarState={fetchTasks} 
+                        />
+                    </div>
+                </div>
+            )}
+
             <ChatWindow 
                 isOpen={isChatOpen} 
                 onClose={() => setIsChatOpen(false)} 
