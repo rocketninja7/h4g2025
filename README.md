@@ -28,3 +28,24 @@ The frontend uses React. To setup, go to the ```frontend/login``` folder and run
 npm install
 npm run start
 ```
+
+## Database
+
+Our database contains the following five tables (with column names in brackets):
+- ```tasks(id, time_start, time_end, event_name, event_desc)```
+- ```users(id, username, password)```
+- ```taskpendingusers(task, user)```
+- ```taskconfirmedusers(task, user)```
+- ```messages(id,sender_id,receiver_id,content,timestamp)```
+
+Note that ```tasks```, ```users``` and ```messages``` have ```id``` as a primary key. Also, for ```taskpendingusers``` and ```taskconfirmedusers```, the ```task``` columns are foreign keys to the ```id``` column of ```tasks```, and the ```user``` columns are foreign keys to the ```id``` column of ```users```. Furthermore in ```messages```, the ```sender_id``` and ```receiver_id``` columns are foreign keys to the ```id``` column of ```users```.
+
+
+## Usage
+
+This app comes prepared with three user credentials. These should be removed from the system when deployed. They are as follows:
+```
+pikachu:pikachu
+piplup:piplup
+mewtwo:mewtwo
+```
