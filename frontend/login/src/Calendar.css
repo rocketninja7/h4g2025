@@ -82,7 +82,8 @@
 
 .calendar-content {
     flex: 1;
-    padding: 1rem;
+    padding: 50px;
+
 }
 
 .calendar-wrapper {

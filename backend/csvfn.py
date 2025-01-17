@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 from user import *
 from task import *
+from message import Message
 
 def get_users():
     with open("backend/users.csv", "r") as f:

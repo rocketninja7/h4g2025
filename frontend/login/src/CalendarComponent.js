@@ -43,7 +43,7 @@ const ModernCalendar = ({ tasksList, handleSelectSlot, handleSelectEvent }) => {
                     <span>☰</span>
                 </button>
                 </div>
-                <h1 className="calendar-title">Calendar</h1>
+                {/* <h1 className="calendar-title">Calendar</h1> */}
                 <div className="header-right">
                     {username && (
                         <span style={{ fontSize: '1rem' }}>

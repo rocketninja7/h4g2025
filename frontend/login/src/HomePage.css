@@ -265,3 +265,8 @@ body, #root {
 .user-item:hover {
     background-color: #f8f9fa;
 }
+
+img{
+    max-width: 125px;
+    max-height: 100px;
+}
