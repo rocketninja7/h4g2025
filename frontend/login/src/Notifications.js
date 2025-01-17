@@ -41,7 +41,7 @@ export default function Notifications({updateCalendarState, userId}) {
                 const response = await fetch('http://127.0.0.1:5000/rejectTask/' + id, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: 1 }),
+                body: JSON.stringify({ id: userId }),
                 });
             //   const data = await response.json();
             //   alert(data.message);
