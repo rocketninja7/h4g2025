@@ -78,6 +78,14 @@ function Register() {
             />
             <label htmlFor="show-password">Show Password</label>
           </div>
+          <div className="form-group">
+            <label>Administrator's code:</label>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="admin-code"
+              required
+            />
+          </div>
           <button type="submit" className="button login-button">
             Register
           </button>

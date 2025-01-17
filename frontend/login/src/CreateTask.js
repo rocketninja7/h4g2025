@@ -219,7 +219,7 @@ const isUserConfirmed = (userId) => {
             color: '#374151'
         },
         input: {
-            padding: '8px 12px',
+            padding: '8px 5px',
             borderRadius: '6px',
             border: '1px solid #e5e7eb',
             fontSize: '14px'
