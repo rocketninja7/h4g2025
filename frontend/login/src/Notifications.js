@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReceiveTask from './ReceiveTask';
+import "./App.css"
 
 export default function Notifications({updateCalendarState, userId}) {
     async function getTasks() {

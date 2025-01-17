@@ -101,6 +101,14 @@ input[type="checkbox"] {
   background-color: #0056b3;
 }
 
+.deny-button {
+  background-color: #e45959;
+}
+
+.deny-button:hover {
+  background-color: #c00d0d;
+}
+
 body,
 html {
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
